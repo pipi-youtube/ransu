@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乱数生成アプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .result-table th, .result-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>乱数生成アプリ</h1>
+        <label for="minInput">最小値：</label>
+        <input type="number" id="minInput" value="1">
+        <label for="maxInput">最大値：</label>
+        <input type="number" id="maxInput" value="100">
+        <label for="countInput">生成する乱数の個数：</label>
+        <input type="number" id="countInput" value="1">
+        <button id="generateButton">生成する</button>
+        <table id="resultTable" class="result-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>番号</th>
+                    <th>乱数</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 生成された乱数がここに表示されます -->
+            </tbody>
+        </table>
+        <button id="printButton" style="display: none;">印刷する</button>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const generateButton = document.getElementById("generateButton");
+            const printButton = document.getElementById("printButton");
+            const resultTable = document.getElementById("resultTable");
+            const resultTableBody = resultTable.querySelector("tbody");
+            const minInput = document.getElementById("minInput");
+            const maxInput = document.getElementById("maxInput");
+            const countInput = document.getElementById("countInput");
+
+            generateButton.addEventListener("click", function () {
+                const min = parseInt(minInput.value);
+                const max = parseInt(maxInput.value);
+                const count = parseInt(countInput.value);
+
+                if (isNaN(min) || isNaN(max) || isNaN(count) || min >= max) {
+                    alert("無効な入力です。入力内容を確認してください。");
+                    return;
+                }
+
+                resultTableBody.innerHTML = ""; // 既存の内容をクリア
+
+                for (let i = 1; i <= count; i++) {
+                    const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+                    const row = document.createElement("tr");
+                    row.innerHTML = `<td>${i}</td><td>${randomNumber}</td>`;
+                    resultTableBody.appendChild(row);
+                }
+
+                resultTable.style.display = "table";
+                printButton.style.display = "block";
+
+                // 生成された結果までスクロールする
+                const resultTableOffset = resultTable.offsetTop - 20;
+                window.scrollTo({
+                    top: resultTableOffset,
+                    behavior: "smooth"
+                });
+            });
+
+            printButton.addEventListener("click", function () {
+                const printContent = document.getElementById("resultTable").outerHTML;
+                const printWindow = window.open("", "_blank");
+                printWindow.document.open();
+                printWindow.document.write(`<html><head><title>印刷</title></head><body>${printContent}</body></html>`);
+                printWindow.document.close();
+                printWindow.print();
+            });
+        });
+    </script>
+</body>
+</html>
